@@ -19,7 +19,7 @@
 //   DOUT will change 2-ticks after ADDR changes when en is 1.
 //////////////////////////////////////////////////////////////////////////////////
 
-
+//one port ram
 module RAM1P
   #(
     parameter DATA_WIDTH = 16,
@@ -55,7 +55,7 @@ module RAM1P
         content[ADDR] <= DIN;
       end
       data_out <= content[ADDR];
-      data_out_d <= data_out;
+      data_out_d <= data_out; //没太明白这里为啥要加一个delay
     end
   end
 

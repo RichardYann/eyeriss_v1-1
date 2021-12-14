@@ -2,9 +2,9 @@
 module FRound
   #(
     parameter INWIDTH = 33,
-              IN_FRAC = 26,
+              IN_FRAC = 24,
               OUTWIDTH = 16,
-              OUT_FRAC = 13
+              OUT_FRAC = 12
   )
   (
     input                        CLK  ,

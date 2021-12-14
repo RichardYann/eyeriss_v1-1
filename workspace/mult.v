@@ -1,5 +1,5 @@
 //向量乘法模块，直接输出16位宽数据
-
+//frac= 12,
 module mult 
 #(
     parameter INWIDTH = 16 
@@ -9,14 +9,30 @@ input signed [INWIDTH-1:0] a,
 input signed [INWIDTH-1:0] b,
 output signed [INWIDTH-1:0] res 
 );
-assign res = a + b;
+wire signed [2*INWIDTH-1:0] P ;
+booth_top booth_0
+(
+    .A(a),
+    .B(b),
+    .P(P)
+);
+
+truncated truncated_0
+(
+    .din(P),
+    .dout(res)
+);
+
 
 endmodule
 
-
-
-
-//3*3向量乘法
+module truncated(
+    input [31:0] din,
+    output [15:0] dout
+)
+assign dout = din[28:12];
+endmodule
+//3*3向量乘法,总共需要
 module mult_3#(
     parameter INWIDTH = 16 ,
     parameter NUM = 3

@@ -52,7 +52,7 @@ module AddrGenPool
   // (* use_dsp = "yes" *)
   reg  [ADDR_WIDTH-1:0]    addr;        // The address
   
-  wire [HEIGHT_WIDTH*2+1:0] addr_full; // full-width addr
+  wire [HEIGHT_WIDTH*2+1:0] addr_full; // full-width addr//???没有连线
 
   reg last, valid, window_last; // Register of flags
   reg all_wrap_d, ij_wrap; 
@@ -170,7 +170,7 @@ module AddrGenPool
     if (RESET == 1'b1) 
       last <= 0;
     else if (EN) 
-      last <= (Snext == LAST);
+      last <= (Snext == LAST);//all_wrap_d == 1
   end
   
   always @(posedge CLK) begin
