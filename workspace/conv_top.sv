@@ -16,9 +16,9 @@ module conv_top #(
 reg
 
 // PE unnits interconnection
-PE_1_1 #(
+PE #(
 
-)u_PE(
+)u_PE_1_1(
     .CLK(CLK),
     .RST(RST),
 

@@ -32,19 +32,19 @@ module truncated(
 )
 assign dout = din[28:12];
 endmodule
+
 //3*3向量乘法,总共需要
 module mult_3#(
-    parameter INWIDTH = 16 ,
-    parameter NUM = 3
+    parameter INWIDTH = 16
 )
 (
 input signed [INWIDTH-1:0] A0,A1,A2,
 input signed [INWIDTH-1:0] B0,B1,B2,
 output signed [INWIDTH-1:0] RES     
 );
-reg signed [INWIDTH-1:0] a_3   [0:NUM-1];
-reg signed [INWIDTH-1:0] b_3   [0:NUM-1];
-reg signed [INWIDTH-1:0] psum   [0:NUM-1];
+reg signed [INWIDTH-1:0] a_3   [0:2];
+reg signed [INWIDTH-1:0] b_3   [0:2];
+reg signed [INWIDTH-1:0] psum   [0:2];
 wire [INWIDTH-1:0] res,mu;
 
 always @(*)begin
@@ -59,7 +59,7 @@ end
 genvar i;
 
 generate
-    for(i = 0; i < NUM; i = i + 1) begin
+    for(i = 0; i < 3; i = i + 1) begin
         mult m1(.a(a_3[i]),.b(b_3[i]),.res(mu));
         always @(*) begin
         psum[i] = mu;
