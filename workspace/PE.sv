@@ -4,27 +4,27 @@
 
 
 //一个PE单元例化5个3*3的乘法器，并行计算
-parameter FIL_S = 3;
-parameter DI_W = 7;
-parameter DI_L = 7;
-parameter DO_W = 5;
-parameter DO_H = 5;
+
 
 module PE
 #(
     parameter INWIDTH = 16
+    parameter FIL_S = 3;
+    parameter DI_W = 7;
+    parameter DI_L = 7;
+    parameter DO_W = 5;
+    parameter DO_H = 5;
 )(
     input clk,rst,en;
 
-    input signed  [INWIDTH-1:0] PSUM_IN     [0:DO_W-1];
     input signed  [INWIDTH-1:0] FILTER_IN   [0:FIL_S -1];
     input signed  [INWIDTH-1:0] DATA_IN     [0:DI_W - 1];
+    input signed  [INWIDTH-1:0] PSUM_IN     [0:DO_W-1];
 
-    output signed [INWIDTH-1:0] FILTER_IN   [0:FIL_S-1];
+    output signed [INWIDTH-1:0] FILTER_OUT   [0:FIL_S-1];
     output signed [INWIDTH-1:0] DATA_OUT    [0:DI_W-1];
     output signed [INWIDTH-1:0] PSUM_OUT    [0:DO_W-1];
 )
-parameter  = ;
 genvar ii,jj;
 //实现序列乘法
 reg signed [INWIDTH-1:0]data_in     [0:DI_W];

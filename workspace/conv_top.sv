@@ -9,210 +9,268 @@ module conv_top #(
     DO_H = 5
 ) (
     input clk,rst,
-    input signed [INWIDTH-1:0]DI[0:DI_W-1][0:DI_H],     //我不明白这个地方怎么定义，数据的读入应该是串行从ram读取？
+    input signed [INWIDTH-1:0] DATA_IN[0:DI_W-1][0:DI_H],     //我不明白这个地方怎么定义，数据的读入应该是串行从ram读取？
     input signed [INWIDTH-1:0] FILTER [0:FIL_S-1][0:FIL_S-1];
-    output signed [INWIDTH-1:0]DO[0:DO_W-1],
+    output signed [INWIDTH-1:0] DATA_OUT[0:DO_W-1],
 );
-reg
+wire signed [INWIDTH-1:0] filter_1_1 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_1_2 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_1_3 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_2_1 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_2_1 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_2_1 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_3_1 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_3_1 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_3_1 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_4_1 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_4_1 [0:FIL_S-1] ;
+wire signed [INWIDTH-1:0] filter_4_1 [0:FIL_S-1] ;
 
-// PE unnits interconnection
+wire signed [INWIDTH-1:0] data_2_1 [0:DI_W-1] ;
+wire signed [INWIDTH-1:0] data_2_2 [0:DI_W-1] ;
+wire signed [INWIDTH-1:0] data_2_3 [0:DI_W-1] ;
+wire signed [INWIDTH-1:0] data_2_4 [0:DI_W-1] ;
+wire signed [INWIDTH-1:0] data_3_1 [0:DI_W-1] ;
+wire signed [INWIDTH-1:0] data_3_2 [0:DI_W-1] ;
+wire signed [INWIDTH-1:0] data_3_3 [0:DI_W-1] ;
+wire signed [INWIDTH-1:0] data_3_4 [0:DI_W-1] ;
+
+wire signed [INWIDTH-1:0] psum_1_1 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_1_2 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_1_3 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_1_4 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_1_5 [0:DO_W-1] ;
+
+wire signed [INWIDTH-1:0] psum_2_1 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_2_2 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_2_3 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_2_4 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_2_5 [0:DO_W-1] ;
+
+wire signed [INWIDTH-1:0] psum_3_1 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_3_2 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_3_3 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_3_4 [0:DO_W-1] ;
+wire signed [INWIDTH-1:0] psum_3_5 [0:DO_W-1] ;
+
+
+assign DATA_OUT = {{data_1_1},{data_1_2},{data_1_3},{data_1_4},{data_1_5}};
+
+//compute series
+//clk1  PE_X_1
+//clk2  PE_X_2
+
+// PE unnits interconnection 3*5
 PE #(
 
-)u_PE_1_1(
-    .CLK(CLK),
-    .RST(RST),
-
-    .FIL_I(ram),
-    .DI(ram),
-    .FIL_O(1_2),
-    .DO(x),
-    .PSUM_O(row1),
+)u_PE_1_1( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(FILTER[0]),
+    .DATA_IN(DATA_IN[0]),
+    .PSUM_IN(psum_2_1),
+    .FILTER_OUT(filter_1_1),
+    .DATA_OUT(data_1_1),
+    .PSUM_OUT(psum_1_1)
 );
 
-PE_2_1 #(
+PE #(
 
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-
-    .FIL_I(ram),
-    .DI(ram),
-    .FIL_O(2_2),
-    .DO(1_2),
-    .PSUM_O(row1),
+)u_PE_2_1( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(FILTER[1]),
+    .DATA_IN(DATA_IN[1]),
+    .PSUM_IN(psum_3_1),
+    .FILTER_OUT(filter_2_1),
+    .DATA_OUT(data_2_1),
+    .PSUM_OUT(psum_2_1)
 );
 
-PE_3_1 #(
+PE #(
 
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-
-    .FIL_I(ram),
-    .DI(ram),
-    .FIL_O(3_2),
-    .DO(2_2),
-    .PSUM_O(row1),
+)u_PE_3_1( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(FILTER[2]),
+    .DATA_IN(DATA_IN[2]),
+    .PSUM_IN(), // 空接
+    .FILTER_OUT(filter_3_1),
+    .DATA_OUT(filter_3_1),
+    .PSUM_OUT(psum_3_1)
 );
 
-PE_1_2 #(
+PE #(
 
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-
-    .FIL_I(1_1),
-    .DI(ram),
-    .FIL_O(1_3),
-    .DO(),
-    .PSUM_O(),
+)u_PE_3_2( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_3_1),
+    .DATA_IN(DATA_IN[3]),
+    .PSUM_IN(),
+    .FILTER_OUT(filter_3_2),
+    .DATA_OUT(data_3_2),
+    .PSUM_OUT(psum_3_2)
 );
 
-PE_2_2 #(
+PE #(
 
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
+)u_PE_3_3( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_3_2),
+    .DATA_IN(DATA_IN[4]),
+    .PSUM_IN(),
+    .FILTER_OUT(filter_3_3),
+    .DATA_OUT(data_3_3),
+    .PSUM_OUT(psum_3_3)
 );
 
-PE_3_2 #(
+PE #(
 
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
+)u_PE_3_4( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_3_3),
+    .DATA_IN(DATA_IN[5]),
+    .PSUM_IN(),
+    .FILTER_OUT(filter_3_4),
+    .DATA_OUT(data_3_4),
+    .PSUM_OUT(psum_3_4)
 );
 
+PE #(
 
-PE_1_3 #(
-
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
-);
-
-PE_2_3 #(
-
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
-);
-
-PE_3_3 #(
-
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
-);
-
-PE_1_4 #(
-
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
-);
-
-PE_2_4 #(
-
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
-);
-
-PE_3_4 #(
-
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
-);
-
-PE_1_5 #(
-
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
-);
-
-PE_2_5 #(
-
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
-);
-
-PE_3_5 #(
-
-)u_PE(
-    .CLK(CLK),
-    .RST(RST),
-    .PSUM_I(),
-    .FIL_I(),
-    .DI(),
-    .FIL_I(),
-    .DO(),
-    .PSUM_O(),
+)u_PE_3_5( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_3_4),
+    .DATA_IN(DATA_IN[6]),
+    .PSUM_IN(),
+    .FILTER_OUT(filter_3_5),
+    .DATA_OUT(data_3_5),
+    .PSUM_OUT(psum_3_5)
 );
 
 
+PE #(
+
+)u_PE_2_2( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_2_1),
+    .DATA_IN(data_3_1),
+    .PSUM_IN(psum_3_2),
+    .FILTER_OUT(filter_2_2),
+    .DATA_OUT(data_2_2),
+    .PSUM_OUT(psum_2_2)
+);
+
+PE #(
+
+)u_PE_2_3( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_2_2),
+    .DATA_IN(data_3_2),
+    .PSUM_IN(psum_3_3),
+    .FILTER_OUT(filter_2_3),
+    .DATA_OUT(data_2_3),
+    .PSUM_OUT(psum_2_3)
+);
+
+PE #(
+
+)u_PE_2_4( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_2_3),
+    .DATA_IN(data_3_3),
+    .PSUM_IN(psum_3_4),
+    .FILTER_OUT(filter_2_4),
+    .DATA_OUT(data_2_4),
+    .PSUM_OUT(psum_2_4)
+);
+
+PE #(
+
+)u_PE_2_5( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_2_4),
+    .DATA_IN(data_3_4),
+    .PSUM_IN(psum_3_5),
+    .FILTER_OUT(filter_2_5),
+    .DATA_OUT(data_2_5),
+    .PSUM_OUT(psum_2_5)
+);
+
+PE #(
+
+)u_PE_1_2( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_1_1),
+    .DATA_IN(data_2_1),
+    .PSUM_IN(psum_2_2),
+    .FILTER_OUT(filter_1_2),
+    .DATA_OUT(data_1_2),
+    .PSUM_OUT(psum_1_2)
+);
+
+PE #(
+
+)u_PE_1_3( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_1_2),
+    .DATA_IN(data_2_2),
+    .PSUM_IN(psum_2_3),
+    .FILTER_OUT(filter_1_3),
+    .DATA_OUT(data_1_3),
+    .PSUM_OUT(psum_1_3)
+);
+
+PE #(
+
+)u_PE_1_4( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_1_3),
+    .DATA_IN(data_2_3),
+    .PSUM_IN(psum_2_4),
+    .FILTER_OUT(filter_1_4),
+    .DATA_OUT(data_1_4),
+    .PSUM_OUT(psum_1_4)
+);
+
+PE #(
+
+)u_PE_1_5( 
+    .clk(clk),
+    .rst(rst),
+    .en(en),
+    .FILTER_IN(filter_1_4),
+    .DATA_IN(data_2_4),
+    .PSUM_IN(psum_2_5),
+    .FILTER_OUT(filter_1_5),
+    .DATA_OUT(data_1_5),
+    .PSUM_OUT(psum_1_5)
+);
 
 endmodule
 
