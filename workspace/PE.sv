@@ -21,18 +21,18 @@ module PE
     input signed  [INWIDTH-1:0] DATA_IN     [0:DI_W - 1];
     input signed  [INWIDTH-1:0] PSUM_IN     [0:DO_W-1];
 
-    output signed [INWIDTH-1:0] FILTER_OUT   [0:FIL_S-1];
+    output signed [INWIDTH-1:0] FILTER_OUT   [ 0:FIL_S-1];
     output signed [INWIDTH-1:0] DATA_OUT    [0:DI_W-1];
     output signed [INWIDTH-1:0] PSUM_OUT    [0:DO_W-1];
-)
-genvar ii,jj;
+    output done
+);
+
 //实现序列乘法
 reg signed [INWIDTH-1:0]data_in     [0:DI_W];
 reg signed [INWIDTH-1:0]filter   [0:FIL_S]; 
-reg signed [INWIDTH-1:0]sum     [0:DO_W];
 reg signed [INWIDTH-1:0]psum     [0:DO_W];
 
-reg en;
+reg done;
 reg [1:0] state,state_next;
 parameter [1:0] IDLE = 2'd0; //初始态
                 INPT = 2'd1; //输入
@@ -43,7 +43,7 @@ always @(*) begin
     case (state)
         IDLE: if(en) state_next = INPT ;
         INPT: state_next = COMP;    
-        COMP: if(counter == 5) state_next = OUPT;
+        COMP: if(counter == 4) state_next = OUPT;
         OUPT: state_next = IDLE;
         default: 
     endcase
@@ -68,11 +68,11 @@ end
 always @(posedge clk) begin:counter
     if(rst&en) begin
         counter <= 0;
-    else
+    else if(state_next ==  COMP)
         counter <= counter + 1;
     end
 end
-
+// input data to the input array seriesly
 always @(*) begin
     case (counter)
         0: data = {{data_in[0]},{data_in[1]},{data_in[2]}} ;
@@ -84,19 +84,28 @@ always @(*) begin
     endcase
 
 end
-generate
-    for(ii; ii < DO_W; ii = ii + 1)  begin:psum
-            mult_3 m1(.a(filter),.b(data),.res(sum[ii]));
-        end    
-endgenerate
+//deposit data form the multipiler_3
+always @(*) begin
+    case(counter)
+        0: psum[0] = res;
+        1: psum[1] = res;
+        2: psum[2] = res;
+        3: psum[3] = res;
+        4: psum[4] = res;
+        default:
+    endcase
+end
+
+ mult_3 m1(.a(filter),.b(data),.res(res));
 
 
-//OUPT  en, psum
-always @(posedge clk) begin:en
-    if(count == 5)
-        en <= 1;
+
+//OUPT  en, psum 
+always @(posedge clk) begin:done
+    if(state_next == OUPT)
+        done <= 1;
     else    
-        en <= 0;
+        done <= 0;
 end
 
 always @(posedge clk) begin:psum
@@ -106,40 +115,10 @@ always @(posedge clk) begin:psum
         FILTER_OUT <= filter;
     end 
     else begin
-        PSUM_out <= 0;
+        PSUM_OUT <= 0;
         DATA_OUT <= 0;
         FILTER_OUT <= 0;
     end
 end
 
 endmodule;
-
-// //INPT
-// generate
-//     for(ii = 0; ii < DI_W; ii = ii + 1)  begin :data_in
-//         always @(posedge clk) begin
-//             if(rst) begin
-//                 data_in[ii] <= 0;
-//             else if (en) begin
-//                 data_in[ii] <= DATA_IN[ii];
-//             end
-//             end
-//         end
-// endgenerate
-
-// generate
-//     for(ii = 0; ii < FIL_S; ii = ii + 1)  begin :filter
-//         always @(posedge clk) begin
-//             if(rst) begin
-//                 filter[ii] <= 0;
-//             else if (en) begin
-//                 filter[ii] <= FILTER_IN[ii];
-//             end
-//             end
-//         end
-// endgenerate
-
-// generate
-//     for(ii = 0; ii < DO_W; ii = ii + 1)  begin :psum
-
-// endgenerate

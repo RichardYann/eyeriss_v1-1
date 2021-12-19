@@ -9,9 +9,10 @@ module conv_top #(
     DO_H = 5
 ) (
     input clk,rst,
-    input signed [INWIDTH-1:0] DATA_IN[0:DI_W-1][0:DI_H],     //我不明白这个地方怎么定义，数据的读入应该是串行从ram读取？
-    input signed [INWIDTH-1:0] FILTER [0:FIL_S-1][0:FIL_S-1];
-    output signed [INWIDTH-1:0] DATA_OUT[0:DO_W-1],
+    input signed [INWIDTH-1:0] DATA_IN[0:DI_W-1][0:DI_H], 
+    input signed [INWIDTH-1:0] FILTER [0:FIL_S-1][0:FIL_S-1],
+    //暂时未考虑数据从 DRAM 读取情况，假设并行输入
+    output signed [INWIDTH-1:0] DATA_OUT[0:DO_W-1]
 );
 wire signed [INWIDTH-1:0] filter_1_1 [0:FIL_S-1] ;
 wire signed [INWIDTH-1:0] filter_1_2 [0:FIL_S-1] ;
