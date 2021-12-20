@@ -1,9 +1,8 @@
 //reference"https://zhuanlan.zhihu.com/p/143802580"
 //12.13,原算法不支持负数的乘法，未将需编码的数转成补码
-//12.14,A和B都需要转成补码，运算结果是补码,需要改进的地方：转为补码那里要精简，最好改成.v
-//纯组合逻辑电路，理论没有延迟
+//12.14,源代码未在最高位扩展符号位，prod需改为[8:0]格式
 //Top module of booth
-module booth_top(
+module mult_booth(
 	input [15:0] A,
 	input [15:0] B,
 	output [31:0] P

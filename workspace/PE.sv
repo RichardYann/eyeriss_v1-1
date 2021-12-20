@@ -21,7 +21,7 @@ module PE
     input signed  [INWIDTH-1:0] DATA_IN     [0:DI_W - 1];
     input signed  [INWIDTH-1:0] PSUM_IN     [0:DO_W-1];
 
-    output signed [INWIDTH-1:0] FILTER_OUT   [ 0:FIL_S-1];
+    output signed [INWIDTH-1:0] FILTER_OUT   [0:FIL_S-1];
     output signed [INWIDTH-1:0] DATA_OUT    [0:DI_W-1];
     output signed [INWIDTH-1:0] PSUM_OUT    [0:DO_W-1];
     output done

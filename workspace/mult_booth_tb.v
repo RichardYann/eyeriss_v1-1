@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
-module booth_top_tb();
+module mult_booth_tb();
     reg  [15:0] A;
     reg  [15:0] B;
     wire [31:0] P;
-booth_top booth_top_test(
+mult_booth mult_booth_test(
        .A(A),
        .B(B),
        .P(P)
@@ -38,8 +38,8 @@ booth_top booth_top_test(
     end    
         //dump fsdb
     initial begin
-        $fsdbDumpfile("booth_top.fsdb");
-        $fsdbDumpvars(0,booth_top_test);
+        $fsdbDumpfile("mult_booth.fsdb");
+        $fsdbDumpvars(0,mult_booth_test);
         $fsdbDumpon;
 	    $fsdbDumpMDA();
         end  
