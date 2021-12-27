@@ -3,23 +3,26 @@
 
 //3*3向量乘法,总共需要
 module vector_mult
+#(
+    parameter INWIDTH = 16
+)
 (
-input  [15:0] A[0:2],
-input  [15:0] B[0:2],
-output  [15:0] RES     
+input  [INWIDTH-1:0] A0,A1,A2,
+input  [INWIDTH-1:0] B0,B1,B2,
+output  [INWIDTH-1:0] RES     
 );
-reg  [15:0] a_3   [0:2];
-reg  [15:0] b_3   [0:2];
-reg  [15:0] psum   [0:2];
-// wire [15:0] mu[0:2];
+reg  [INWIDTH-1:0] a_3   [0:2];
+reg  [INWIDTH-1:0] b_3   [0:2];
+reg  [INWIDTH-1:0] psum   [0:2];
+// wire [INWIDTH-1:0] mu[0:2];
 
 always @(*)begin
- a_3[0] = A[0] ;
- a_3[1] = A[1] ;
- a_3[2] = A[2] ;
- b_3[0] = B[0] ;
- b_3[1] = B[1] ;
- b_3[2] = B[2] ;
+ a_3[0] = A0 ;
+ a_3[1] = A1 ;
+ a_3[2] = A2 ;
+ b_3[0] = B0 ;
+ b_3[1] = B1 ;
+ b_3[2] = B2 ;
 end
 
 genvar i;
@@ -44,11 +47,11 @@ module mult
     parameter INWIDTH = 16 
 )
 (
-input  [15:0] a,
-input  [15:0] b,
-output  [15:0] res 
+input  [INWIDTH-1:0] a,
+input  [INWIDTH-1:0] b,
+output  [INWIDTH-1:0] res 
 );
-wire  [31:0] P ;
+wire  [2*INWIDTH-1:0] P ;
 mult_booth booth_0
 (
     .A(a),
@@ -65,7 +68,7 @@ truncated truncated_0
 
 endmodule
 
-module truncated(
+module truncated( 
     input [31:0] din,
     output [15:0] dout
 );

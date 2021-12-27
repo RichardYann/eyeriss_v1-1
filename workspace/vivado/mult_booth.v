@@ -15,10 +15,8 @@ wire [7:0] two;
 wire [15:0] B_com;
 wire [15:0] A_com;
 //B 转为补码 
-// assign B_com = B[15] ? (~B + 16'b1000_0000_0000_0001) : B;
-// assign A_com = A[15] ? (~A + 16'b1000_0000_0000_0001) : A;
-assign B_com = B;
-assign A_com = A;
+assign B_com = B[15] ? (~B + 16'b1000_0000_0000_0001) : B;
+assign A_com = A[15] ? (~A + 16'b1000_0000_0000_0001) : A;
 genvar i;
 generate 
 	for(i=0; i<8;i=i+1) begin

@@ -1,51 +1,32 @@
 //深度为8，位宽为16, 7*7+3*3 = 58
-module rom_test(clk,addr,cs_en,dout);
-parameter DATA_WIDTH=16;		//数据位宽
-parameter ADDR_WIDTH=6;		//地址位宽
-parameter ADDR_START=0;		//地址起始
-parameter ADDR_END  =64;	//地址尾
-parameter FILE_NAME="data.mif";		//文件名
+module rom(clk,rst,addr,read,dout);
 
+// parameter FILE_NAME="data.mif";		//文件名
   input		clk,rst,read;
   input		[5:0]addr;//地址线 log2(58)
   output	[15:0]dout;//读出的数据
 
   reg		[15:0] dout;
-  reg		[15:0] rom[64:0];
-    
-//   initial begin
-//     rom[0] = 8'b0000_0000;
-//     rom[1] = 8'b0000_0001;
-//     rom[2] = 8'b0000_0010;
-//     rom[3] = 8'b0000_0011;
-//     rom[4] = 8'b0000_0100;
-//     rom[5] = 8'b0000_0101;
-//     rom[6] = 8'b0000_0110;
-//     rom[7] = 8'b0000_0111;       
-//   end
-
-// //read txt
-// integer fp;
-// integer i;
-// integer n;
-
-// initial begin
-// 	fp=$fopen(FILE_NAME,"r");
-// 	i=ADDR_START;
-// 	while(!($feof(fp)) && i<=ADDR_END) begin
-// 		n=$fscanf(fp,"%x",rom[i]);
-// 		i=i+1;
-// 	end
-// 	$fclose(fp);
-// end
+  reg		[15:0] rom[0:63];
 
 initial begin  
-        $readmemh ("FILE_NAME",rom);  
+        rom = {16'h0000,16'h0000,16'h0070,16'h0757,16'h0F1F,16'h1000,16'h0FDF,
+               16'h01A1,16'h0AAA,16'h0BBB,16'h0FCF,16'h0FCF,16'h0FDF,16'h0FCF,
+               16'h0C8C,16'h0FDF,16'h0FCF,16'h0FCF,16'h0D6D,16'h0A8A,16'h0A8A,
+               16'h0E1E,16'h0FDF,16'h0FCF,16'h0FCF,16'h0282,16'h0000,16'h0000,
+               16'h0E2E,16'h1000,16'h0FDF,16'h0A8A,16'h0000,16'h0000,16'h0000,
+               16'h0969,16'h0FDF,16'h0FCF,16'h0A8A,16'h0000,16'h0000,16'h0000,
+               16'h0717,16'h0FDF,16'h0FCF,16'h0A8A,16'h0000,16'h0000,16'h0000,
+               16'hFD01,16'h01CD,16'hFEFC,
+               16'hFFC4,16'hFF30,16'hFDB4,
+               16'hFEDD,16'hFFBC,16'hFCFD,
+               16'h0000,16'h0000,16'h0000,16'h0000,16'h0000,16'h0000     };
     end 
-  
+  reg [15:0] d_test;
   always@(posedge clk) begin
-    if(rst)    dout <= 0;
-    else if(!read)	 dout <= 16'bzzzz_zzzz;
-    else		 dout <= rom[addr]; 
+    d_test <= rom[addr];
+    if(rst)           dout <= rom[6];
+    else if(!read)	  dout <= 16'bzzzz_zzzz_zzzz_zzzz;
+    else		          dout <= rom[addr]; 
   end
 endmodule
