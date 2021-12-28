@@ -27,15 +27,10 @@ genvar i;
 generate
     for(i = 0; i < 3; i = i + 1) begin
         mult m1(.a(a_3[i]),.b(b_3[i]),.res(psum[i]));
-        // always @(*) begin
-        // psum[i] = mu[i];
-        // end
     end
 endgenerate
 
 assign RES = psum[0] + psum[1] + psum[2];
-
-
 endmodule
 
 

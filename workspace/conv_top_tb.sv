@@ -2,8 +2,8 @@ module conv_top_tb();
     reg clk,rst,en;
     reg     [5:0] addr ;
     reg           read ;
-    wire   [15:0] DATA_OUT[0:4][0:4];
     reg     [6:0] n;
+    wire   [15:0] DATA_OUT;
 conv_top conv_top_test(
        .clk(clk),
        .rst(rst),
@@ -15,6 +15,7 @@ conv_top conv_top_test(
 
     //clk
     initial begin 
+
         clk = 0;
         forever
         #10
@@ -23,6 +24,7 @@ conv_top conv_top_test(
         
     //RESET
     initial begin
+        $sdf_annotate("conv.sdf", conv_top_test);
         rst = 0;
         #5
         rst = 1;
@@ -34,6 +36,7 @@ conv_top conv_top_test(
 
     //start and output
     initial begin
+        en = 0;
         #55
         en = 1;
         #20

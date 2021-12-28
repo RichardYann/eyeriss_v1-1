@@ -125,7 +125,7 @@ wire [31:0] s_lev31;
 wire [31:0] c_lev31;
 
 //level 0
-csa #(32) csa_lev01(
+csa  csa_lev01(
 	.op1( prod[0]      ),
 	.op2( prod[1] << 2 ),//运算后每个prod都需要移位两次 
 	.op3( prod[2] << 4 ),
@@ -133,7 +133,7 @@ csa #(32) csa_lev01(
 	.C	( c_lev01      )
 );
 
-csa #(32) csa_lev02(
+csa  csa_lev02(
 	.op1( prod[3] << 6 ),
 	.op2( prod[4] << 8 ),
 	.op3( prod[5] << 10 ),
@@ -142,7 +142,7 @@ csa #(32) csa_lev02(
 );
 
 //level 1
-csa #(32) csa_lev11(
+csa  csa_lev11(
 	.op1( s_lev01      ),
 	.op2( c_lev01 << 1 ),
 	.op3( s_lev02      ),
@@ -150,7 +150,7 @@ csa #(32) csa_lev11(
 	.C	( c_lev11      )
 );
 
-csa #(32) csa_lev12(
+csa  csa_lev12(
 	.op1( c_lev02 << 1 ),
 	.op2( prod[6] << 12),
 	.op3( prod[7] << 14),
@@ -159,7 +159,7 @@ csa #(32) csa_lev12(
 );
 
 //level 2
-csa #(32) csa_lev21(
+csa  csa_lev21(
 	.op1( s_lev11      ),
 	.op2( c_lev11 << 1 ),
 	.op3( s_lev12      ),
@@ -168,7 +168,7 @@ csa #(32) csa_lev21(
 );
 
 //level 3
-csa #(32) csa_lev31(
+csa  csa_lev31(
 	.op1( s_lev21 ),
 	.op2( c_lev21 << 1 ),
 	.op3( c_lev12 << 1 ),
@@ -177,7 +177,7 @@ csa #(32) csa_lev31(
 );
 
 //adder
-rca #(32) u_rca (
+rca  u_rca (
     .op1 ( s_lev31  ), 
     .op2 ( c_lev31 << 1  ),
     .cin ( 1'b0   ),
@@ -189,17 +189,17 @@ endmodule
 
 //Basic arithment units
 //carry save adder
-module csa #(width=16) (
-	input [width-1:0] op1,
-	input [width-1:0] op2,
-	input [width-1:0] op3,
-	output [width-1:0] S,
-	output [width-1:0] C
+module csa  (
+	input [31:0] op1,
+	input [31:0] op2,
+	input [31:0] op3,
+	output [31:0] S,
+	output [31:0] C
 );
 
 genvar i;
 generate
-	for(i=0; i<width; i=i+1) begin
+	for(i=0; i<32; i=i+1) begin
 		full_adder u_full_adder(
 			.a      (   op1[i]    ),
 			.b      (   op2[i]    ),
@@ -213,20 +213,20 @@ endgenerate
 endmodule
 
 //rca adder
-module rca #(width=16) (
-    input  [width-1:0] op1,
-    input  [width-1:0] op2,
+module rca  (
+    input  [31:0] op1,
+    input  [31:0] op2,
     input  cin,
-    output [width-1:0] sum,
+    output [31:0] sum,
     output cout
 );
 
-wire [width:0] temp;
+wire [32:0] temp;
 assign temp[0] = cin;
-assign cout = temp[width];
+assign cout = temp[32];
 
 genvar i;
-for( i=0; i<width; i=i+1) begin
+for( i=0; i<32; i=i+1) begin
     full_adder u_full_adder(
         .a      (   op1[i]     ),
         .b      (   op2[i]     ),

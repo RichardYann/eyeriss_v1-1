@@ -1,5 +1,6 @@
 `timescale 1ns / 1ns
 module PE
+//Edit Suggestion,12.28. change the en to a step signal rather than a pulse.
 (
     input clk,rst,en,
 
@@ -30,24 +31,33 @@ parameter [1:0] IDLE = 2'd0, //初始
                 OUPT = 2'd3; //输出
 reg [2:0]counter;
 
+reg flag;
+always @(posedge clk) begin
+    if(rst) flag <= 0;
+    else if(en) flag <= 1;
+    else if(done) flag <= 0;
+end
 //state switch
 always @(posedge clk) begin
     if(rst||en) begin
         state <= IDLE;
     end
     else begin
-        state = state_next;
+        state <= state_next;
     end
 end
 
 always @(*) begin
+    if(rst) state_next = IDLE;
+    else begin
     case (state) 
-        IDLE: if(en) state_next = INPT ;
-        INPT: state_next = COMP;    
-        COMP: if(counter == 4) state_next = OUPT;
-        OUPT: state_next = IDLE;
+         IDLE: if(en) state_next = INPT ;
+         INPT: if(flag) state_next = COMP;    
+         COMP: if(counter == 4) state_next = OUPT;
+         OUPT: state_next = IDLE;
         default: state_next = IDLE;
-    endcase    
+    endcase  
+    end  
 end
 //INPT
 
@@ -55,12 +65,10 @@ always @(posedge clk) begin
     if(rst) begin
         data_in <= {0,0,0,0,0,0,0};
         filter  <= {0,0,0};
-        psum    <= {0,0,0,0,0};
     end
     else if(state_next == INPT) begin
         data_in <= DATA_IN;
         filter <= FILTER_IN;
-        psum <= PSUM_IN;
     end
 end
 
@@ -69,12 +77,14 @@ always @(posedge clk) begin
     if(rst||en) begin
         counter <= 0;
     end
-    else if(state_next ==  COMP) begin
+    else if((state_next ==  COMP) && flag) begin
         counter <= counter + 1;
     end
 end
 // input data to the input array seriesly
-always @(*) begin
+always @(*) begin 
+    if(rst) data = {0,0,0};
+    else begin
     case (counter)
         0: data = {data_in[0],data_in[1],data_in[2]} ;
         1: data = {data_in[1],data_in[2],data_in[3]} ;
@@ -83,9 +93,13 @@ always @(*) begin
         4: data = {data_in[4],data_in[5],data_in[6]} ;
         default: data = {0,0,0};
     endcase
+    end
 end
 //deposit data from the multipiler_3
 always @(posedge clk) begin
+    if(rst) psum <= {0,0,0,0,0};
+    else if(state_next == INPT) psum <= PSUM_IN;
+    else
     case(counter)
         0: if(state_next == COMP)psum[0] <= psum[0] + res;
         1: psum[1] <= psum[1] + res;
@@ -100,10 +114,12 @@ vector_mult m1(.A(filter),.B(data),.RES(res));
 
 //OUPT  en, psum 
 always @(posedge clk) begin
-    if(state_next == OUPT)
+    if(rst) done <= 0;
+    else  if(state_next == OUPT)
         done <= 1;
     else    
         done <= 0;
+
 end
 
 
